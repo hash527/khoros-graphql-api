@@ -1,5 +1,4 @@
 import { getMessages } from "../khorosApi";
-// export const messages = () => "Hello, world";
 export const messages = async (
   obj: any,
   args: any,
@@ -11,7 +10,6 @@ export const messages = async (
     //@ts-ignore
     return response?.data;
   } catch (err) {
-    console.log(err);
     return err;
   }
 };
