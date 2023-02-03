@@ -8,7 +8,7 @@ export const messages = async (
   try {
     const response = await getMessages(args.limit);
     //@ts-ignore
-    return response?.data;
+    return response;
   } catch (err) {
     return err;
   }

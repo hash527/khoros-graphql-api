@@ -13,6 +13,7 @@
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
+    "async-cache-dedupe": "^1.8.1",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.5",
     "got": "^12.5.3",
@@ -23,8 +24,5 @@
     "react-dom": "18.2.0",
     "typescript": "4.9.4",
     "xml-js": "^1.6.11"
-  },
-  "devDependencies": {
-    "@graphql-yoga/plugin-response-cache": "^1.5.1"
   }
 }

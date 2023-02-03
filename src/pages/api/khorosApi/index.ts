@@ -8,6 +8,13 @@ const community = {
   password: process.env.COMMUNITY_PASSWORD,
 };
 
+import { createCache } from "async-cache-dedupe";
+
+const cache = createCache({
+  ttl: 600, // seconds
+  storage: { type: "memory" },
+});
+
 const getToken = async (
   communityAddress: string,
   username: string,
@@ -49,21 +56,29 @@ const khorosApi = got.extend({
   },
 });
 
+cache.define("fetchMessages", async (limit) => {
+  console.log("hit cache");
+  const response = await khorosApi
+    .post("search", {
+      json: [
+        {
+          messages: {
+            fields: [],
+            limit: limit,
+          },
+        },
+      ],
+    })
+    .json();
+  return response;
+});
+
 export const getMessages = async (limit: any) => {
   try {
-    const response = await khorosApi
-      .post("search", {
-        json: [
-          {
-            messages: {
-              fields: [],
-              limit: limit,
-            },
-          },
-        ],
-      })
-      .json();
-    return response;
+    //@ts-ignore
+    const p1 = await cache.fetchMessages(limit);
+    const response = await Promise.all([p1]);
+    return response[0]?.data;
   } catch (error) {
     throw new GraphQLError("Unable to retrieve messages");
   }
