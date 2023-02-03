@@ -56,7 +56,7 @@ export const getMessages = async (limit: any) => {
         json: [
           {
             messages: {
-              fields: ["id", "subject"],
+              fields: [],
               limit: limit,
             },
           },

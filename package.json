@@ -23,5 +23,8 @@
     "react-dom": "18.2.0",
     "typescript": "4.9.4",
     "xml-js": "^1.6.11"
+  },
+  "devDependencies": {
+    "@graphql-yoga/plugin-response-cache": "^1.5.1"
   }
 }
