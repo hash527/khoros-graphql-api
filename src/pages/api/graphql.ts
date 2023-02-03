@@ -1,7 +1,7 @@
 import { createYoga } from "graphql-yoga";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { schema } from "./schema";
-import { useResponseCache } from "@graphql-yoga/plugin-response-cache";
+// import { useResponseCache } from "@graphql-yoga/plugin-response-cache";
 
 export const config = {
   api: {
@@ -18,11 +18,11 @@ export default createYoga<{
   schema,
   // Needed to be defined explicitly because our endpoint lives at a different path other than `/graphql`
   graphqlEndpoint: "/api/graphql",
-  plugins: [
-    useResponseCache({
-      // global cache
-      session: () => null,
-      ttl: 3600000,
-    }),
-  ],
+  // plugins: [
+  //   useResponseCache({
+  //     // global cache
+  //     session: () => null,
+  //     ttl: 3600000,
+  //   }),
+  // ],
 });
