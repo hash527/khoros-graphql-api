@@ -1,10 +1,11 @@
 import { createSchema } from "graphql-yoga";
-import { messages } from "../resolvers";
+import { messages, message } from "../resolvers";
 
 export const schema = createSchema({
   typeDefs: /* GraphQL */ `
     type Query {
-      messages(limit: Int): Data
+      messages(limit: Int): MessagesData
+      message(id: String): Items
     }
 
     type UserContext {
@@ -154,18 +155,23 @@ export const schema = createSchema({
       author: Author
     }
 
-    type Data {
+    type MessagesData {
       type: String
       list_item_type: String
       size: Int
       next_cursor: String
       items: [Items]
     }
+
+    # type MessageData {
+    #   message: Items
+    # }
   `,
 
   resolvers: {
     Query: {
       messages: messages,
+      message: message,
     },
   },
 });

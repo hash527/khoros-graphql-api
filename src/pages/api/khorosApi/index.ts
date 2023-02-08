@@ -1,3 +1,4 @@
+import { messages } from "./../resolvers/index";
 import { xml2json } from "xml-js";
 import got from "got";
 import { GraphQLError } from "graphql";
@@ -57,7 +58,7 @@ const khorosApi = got.extend({
 });
 
 cache.define("fetchMessages", async (limit) => {
-  console.log("hit cache");
+  // console.log("hit cache");
   const response = await khorosApi
     .post("search", {
       json: [
@@ -73,12 +74,39 @@ cache.define("fetchMessages", async (limit) => {
   return response;
 });
 
+cache.define("fetchMessage", async (id) => {
+  const response = await khorosApi
+    .post("search", {
+      json: [
+        {
+          messages: {
+            fields: [],
+            constraints: [{ id: id }],
+          },
+        },
+      ],
+    })
+    .json();
+  return response;
+});
+
 export const getMessages = async (limit: any) => {
   try {
     //@ts-ignore
     const p1 = await cache.fetchMessages(limit);
     const response = await Promise.all([p1]);
     return response[0]?.data;
+  } catch (error) {
+    throw new GraphQLError("Unable to retrieve messages");
+  }
+};
+
+export const getMessage = async (id: any) => {
+  try {
+    //@ts-ignore
+    const p1 = await cache.fetchMessage(id);
+    const response = await Promise.all([p1]);
+    return response[0]?.data.items[0];
   } catch (error) {
     throw new GraphQLError("Unable to retrieve messages");
   }
