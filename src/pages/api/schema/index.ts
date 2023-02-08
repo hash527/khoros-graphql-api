@@ -5,7 +5,7 @@ export const schema = createSchema({
   typeDefs: /* GraphQL */ `
     type Query {
       messages(limit: Int): MessagesData
-      message(id: String): Items
+      message(id: String!): Items
     }
 
     type UserContext {
