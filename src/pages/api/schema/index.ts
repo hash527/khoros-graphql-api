@@ -41,6 +41,19 @@ export const schema = createSchema({
       query: String
     }
 
+    type LabelItems {
+      type: String
+      id: String
+      text: String
+    }
+
+    type LabelsSubquried {
+      type: String
+      list_item_type: String
+      size: Int
+      items: [LabelItems]
+    }
+
     type Labels {
       query: String
     }
@@ -112,7 +125,67 @@ export const schema = createSchema({
       login: String
     }
 
+    type KudoUser {
+      id: String
+      login: String
+    }
+
+    type KudoItems {
+      id: String
+      href: String
+      user: KudoUser
+    }
+
+    type KudosSubquried {
+      type: String
+      size: Int
+      items: [KudoItems]
+    }
+
     type Items {
+      type: String
+      id: String
+      href: String
+      view_href: String
+      subject: String
+      search_snippet: String
+      body: String
+      teaser: String
+      post_time: String
+      post_time_friendly: String
+      depth: Int
+      read_only: Boolean
+      edit_frozen: Boolean
+      language: String
+      can_accept_solution: Boolean
+      placeholder: Boolean
+      is_solution: Boolean
+      moderation_status: String
+      visibility_scope: String
+      device_id: String
+      popularity: Float
+      excluded_from_kudos_leaderboards: Boolean
+      is_promoted: Boolean
+      user_context: UserContext
+      custom_tags: CustomTags
+      ratings: Ratings
+      replies: Replies
+      attachments: Attachments
+      videos: Videos
+      images: Images
+      labels: LabelsSubquried
+      tkb_helpfulness_ratings: TkbHelpfulnessRatings
+      tags: Tags
+      kudos: KudosSubquried
+      current_revision: CurrentRevision
+      metrics: Metrics
+      topic: Topic
+      conversation: Conversation
+      board: Board
+      author: Author
+    }
+
+    type Items2 {
       type: String
       id: String
       href: String
@@ -160,7 +233,7 @@ export const schema = createSchema({
       list_item_type: String
       size: Int
       next_cursor: String
-      items: [Items]
+      items: [Items2]
     }
 
     # type MessageData {
