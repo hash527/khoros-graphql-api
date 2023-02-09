@@ -142,6 +142,149 @@ export const schema = createSchema({
       items: [KudoItems]
     }
 
+    type TagsSubquried {
+      type: String
+      size: Int
+      items: [LabelItems]
+    }
+
+    type TKBItemField {
+      id: String
+      time: String
+      value: Boolean
+    }
+
+    type TkbHelpfulnessRatingsSubQuried {
+      type: String
+      size: Int
+      items: [TKBItemField]
+    }
+
+    type AlbumField {
+      type: String
+      id: String
+      href: String
+      view_href: String
+      title: String
+    }
+
+    type ImagesItems {
+      href: String
+      view_href: String
+      title: String
+      description: String
+      tiny_href: String
+      thumb_href: String
+      small_href: String
+      medium_href: String
+      large_href: String
+      original_href: String
+      width: Int
+      height: Int
+      upload_time: String
+      upload_time_friendly: String
+      album: AlbumField
+      visibility: String
+      moderation_status: String
+    }
+
+    type ImagesSubQuried {
+      type: String
+      items: [ImagesItems]
+    }
+
+    type videoItems {
+      href: String
+      view_href: String
+      title: String
+      description: String
+      tiny_href: String
+      video_type: String
+      width: Int
+      height: Int
+      upload_date: String
+      format: String
+      moderation_status: String
+    }
+
+    type VideosSubQuried {
+      type: String
+      items: [videoItems]
+    }
+
+    type attachmentItems {
+      href: String
+      filename: String
+      filesize: Int
+      content_type: String
+      id: String
+      position: Int
+      url: String
+    }
+
+    type AttachmentsSubQuried {
+      type: String
+      items: [attachmentItems]
+    }
+
+    type ParentField {
+      type: String
+      id: String
+      href: String
+      view_href: String
+    }
+
+    type repliesItems {
+      type: String
+      id: String
+      href: String
+      view_href: String
+      author: Author
+      subject: String
+      search_snippet: String
+      body: String
+      board: Board
+      conversation: Conversation
+      topic: Topic
+      parent: ParentField
+      depth: Int
+    }
+
+    type RepliesSubQuried {
+      type: String
+      items: [repliesItems]
+    }
+
+    type ratingsItems {
+      id: String
+      time: String
+      value: Int
+      user: KudoUser
+    }
+
+    type RatingsSubQuried {
+      type: String
+      items: [ratingsItems]
+    }
+
+    type MessageScopField {
+      text: String
+      value: String
+    }
+
+    type customTagsItems {
+      id: String
+      href: String
+      message_scope: MessageScopField
+      possible_values: String
+      text: String
+    }
+
+    type CustomTags {
+      type: String
+      items: [customTagsItems]
+    }
+
     type Items {
       type: String
       id: String
@@ -168,14 +311,14 @@ export const schema = createSchema({
       is_promoted: Boolean
       user_context: UserContext
       custom_tags: CustomTags
-      ratings: Ratings
-      replies: Replies
-      attachments: Attachments
-      videos: Videos
-      images: Images
+      ratings: RatingsSubQuried
+      replies: RepliesSubQuried
+      attachments: AttachmentsSubQuried
+      videos: VideosSubQuried
+      images: ImagesSubQuried
       labels: LabelsSubquried
-      tkb_helpfulness_ratings: TkbHelpfulnessRatings
-      tags: Tags
+      tkb_helpfulness_ratings: TkbHelpfulnessRatingsSubQuried
+      tags: TagsSubquried
       kudos: KudosSubquried
       current_revision: CurrentRevision
       metrics: Metrics
@@ -233,7 +376,7 @@ export const schema = createSchema({
       list_item_type: String
       size: Int
       next_cursor: String
-      items: [Items2]
+      items: [Items]
     }
 
     # type MessageData {
