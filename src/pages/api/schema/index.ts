@@ -378,10 +378,6 @@ export const schema = createSchema({
       next_cursor: String
       items: [Items]
     }
-
-    # type MessageData {
-    #   message: Items
-    # }
   `,
 
   resolvers: {

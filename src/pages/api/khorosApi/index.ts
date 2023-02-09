@@ -1,21 +1,19 @@
-import { messages } from "./../resolvers/index";
 import { xml2json } from "xml-js";
 import got from "got";
 import { GraphQLError } from "graphql";
+import { fields } from "./fields";
+import { subQueries } from "./subQueries";
+import Redis from "ioredis";
+
+let client = new Redis(
+  "redis://default:317a7ca1f0fb405bbaa53d28f6ccf0bc@us1-solid-marten-39604.upstash.io:39604"
+);
 
 const community = {
   address: process.env.COMMUNITY_URL,
   username: process.env.COMMUNITY_USERNAME,
   password: process.env.COMMUNITY_PASSWORD,
 };
-
-import { createCache } from "async-cache-dedupe";
-
-const cache = createCache({
-  ttl: 600, // seconds
-  storage: { type: "memory" },
-});
-
 const getToken = async (
   communityAddress: string,
   username: string,
@@ -51,156 +49,41 @@ getToken(community.address, community.username, community.password).then(
   (response) => (token = response)
 );
 
-const khorosApi = got.extend({
+export const khorosApi = got.extend({
   prefixUrl: `https://${community.address}/api/2.0/`,
   headers: {
     "li-api-session-key": token,
   },
 });
 
-cache.define("fetchMessages", async (limit) => {
-  // console.log("hit cache");
-  const response = await khorosApi
-    .post("search", {
-      json: [
-        {
-          messages: {
-            fields: [
-              "type",
-              "id",
-              "href",
-              "view_href",
-              "subject",
-              "search_snippet",
-              "body",
-              "teaser",
-              "post_time",
-              "post_time_friendly",
-              "depth",
-              "read_only",
-              "edit_frozen",
-              "language",
-              "can_accept_solution",
-              "placeholder",
-              "is_solution",
-              "moderation_status",
-              "device_id",
-              "popularity",
-              "excluded_from_kudos_leaderboards",
-              "is_promoted",
-              "user_context",
-              "custom_tags",
-              "ratings",
-              "replies",
-              "attachments",
-              "videos",
-              "images",
-              "labels",
-              "kudos",
-              "tkb_helpfulness_ratings",
-              "tags",
-              "current_revision",
-              "metrics",
-              "topic",
-              "conversation",
-              "board",
-              "author",
-            ],
-            limit: limit,
-            subQueries: {
-              labels: {},
-              kudos: {},
-              tags: {},
-              tkb_helpfulness_ratings: {},
-              images: {},
-              videos: {},
-              attachments: {},
-              replies: {},
-              ratings: {},
-              custom_tags: {},
-            },
-          },
-        },
-      ],
-    })
-    .json();
-  return response;
-});
-
-cache.define("fetchMessage", async (id) => {
-  const response = await khorosApi
-    .post("search", {
-      json: [
-        {
-          messages: {
-            fields: [
-              "type",
-              "id",
-              "href",
-              "view_href",
-              "subject",
-              "search_snippet",
-              "body",
-              "teaser",
-              "post_time",
-              "post_time_friendly",
-              "depth",
-              "read_only",
-              "edit_frozen",
-              "language",
-              "can_accept_solution",
-              "placeholder",
-              "is_solution",
-              "moderation_status",
-              "device_id",
-              "popularity",
-              "excluded_from_kudos_leaderboards",
-              "is_promoted",
-              "user_context",
-              "custom_tags",
-              "ratings",
-              "replies",
-              "attachments",
-              "videos",
-              "images",
-              "labels",
-              "kudos",
-              "tkb_helpfulness_ratings",
-              "tags",
-              "current_revision",
-              "metrics",
-              "topic",
-              "conversation",
-              "board",
-              "author",
-            ],
-            constraints: [{ id: id }],
-            subQueries: {
-              labels: {},
-              kudos: {},
-              tags: {},
-              tkb_helpfulness_ratings: {},
-              images: {},
-              videos: {},
-              attachments: {},
-              replies: {},
-              ratings: {},
-              custom_tags: {},
-            },
-          },
-        },
-      ],
-    })
-    .json();
-  return response;
-});
-
 export const getMessages = async (limit: any) => {
   try {
-    //@ts-ignore
-    const p1 = await cache.fetchMessages(limit);
-    const response = await Promise.all([p1]);
-    return response[0]?.data;
+    const data = client.get("messages").then((result: any) => {
+      return result;
+    });
+    const messages = await data;
+    if (messages) {
+      // console.log("hit cache");
+      return JSON.parse(messages);
+    }
+
+    const response = await khorosApi
+      .post("search", {
+        json: [
+          {
+            messages: {
+              fields,
+              limit,
+              subQueries,
+            },
+          },
+        ],
+      })
+      .json();
+    await client.set("messages", JSON.stringify(response));
+    await client.expire("messages", 600);
+    // console.log("miss cache");
+    return response;
   } catch (error) {
     throw new GraphQLError("Unable to retrieve messages");
   }
@@ -208,12 +91,32 @@ export const getMessages = async (limit: any) => {
 
 export const getMessage = async (id: any) => {
   try {
+    const data = client.get("message").then((result: any) => {
+      return result;
+    });
+    const message = await data;
+    if (message) {
+      // console.log("hit cache");
+      return JSON.parse(message).data.items[0];
+    }
+    const response = await khorosApi
+      .post("search", {
+        json: [
+          {
+            messages: {
+              fields,
+              constraints: [{ id }],
+              subQueries,
+            },
+          },
+        ],
+      })
+      .json();
+    await client.set("message", JSON.stringify(response));
+    await client.expire("message", 600);
+    // console.log("miss cache");
     //@ts-ignore
-    const p1 = await cache.fetchMessage(id);
-    const response = await Promise.all([p1]);
-    console.log("res", response);
-
-    return response[0]?.data.items[0];
+    return response.data.items[0];
   } catch (error) {
     throw new GraphQLError("Unable to retrieve messages");
   }
