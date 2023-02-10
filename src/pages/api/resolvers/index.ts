@@ -1,4 +1,4 @@
-import { getMessage, getMessages } from "../khorosApi";
+import { getMessage, getMessages } from "../khoros";
 export const messages = async (
   obj: any,
   args: any,
