@@ -11,9 +11,18 @@ const community = {
 
 import { createCache } from "async-cache-dedupe";
 
+import Redis from "ioredis";
+
+let client = new Redis(
+  "redis://default:317a7ca1f0fb405bbaa53d28f6ccf0bc@us1-solid-marten-39604.upstash.io:39604"
+);
+
 const cache = createCache({
   ttl: 600, // seconds
-  storage: { type: "memory" },
+  storage: {
+    type: "redis",
+    options: { client, invalidation: { referencesTTL: 600 } },
+  },
 });
 
 const getToken = async (
