@@ -30,7 +30,7 @@ const getToken = async (
         compact: true,
       })
     );
-    const sessionKey = jsonReponse.response.value._text;
+    const sessionKey = jsonReponse.response?.value?._text;
     return sessionKey;
   } catch (error) {
     throw new GraphQLError("Authentication Failed");

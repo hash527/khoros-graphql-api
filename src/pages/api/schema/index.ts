@@ -1,11 +1,21 @@
 import { createSchema } from "graphql-yoga";
-import { messages, message } from "../resolvers";
+import { messages, message, modifyMessage } from "../resolvers";
 
 export const schema = createSchema({
   typeDefs: /* GraphQL */ `
     type Query {
-      messages(limit: Int): MessagesData
-      message(id: String!): Items
+      messages(limit: Int): Messages
+      message(id: String!): Message
+    }
+
+    type Mutation {
+      updateMessage(input: updateMessageInput!): Message
+    }
+
+    input updateMessageInput {
+      id: String
+      subject: String
+      body: String
     }
 
     type UserContext {
@@ -285,7 +295,7 @@ export const schema = createSchema({
       items: [customTagsItems]
     }
 
-    type Items {
+    type Message {
       type: String
       id: String
       href: String
@@ -371,12 +381,12 @@ export const schema = createSchema({
       author: Author
     }
 
-    type MessagesData {
+    type Messages {
       type: String
       list_item_type: String
       size: Int
       next_cursor: String
-      items: [Items]
+      items: [Message]
     }
 
     # type MessageData {
@@ -388,6 +398,9 @@ export const schema = createSchema({
     Query: {
       messages: messages,
       message: message,
+    },
+    Mutation: {
+      updateMessage: modifyMessage,
     },
   },
 });

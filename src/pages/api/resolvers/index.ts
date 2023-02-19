@@ -17,9 +17,27 @@ export const messages = async (
 export const message = async (obj: any, args: any, context: any, info: any) => {
   try {
     const response = await getMessage(args.id);
-    //@ts-ignore
-    console.log(response, "message");
     return response;
+  } catch (err) {
+    return err;
+  }
+};
+
+export const modifyMessage = async (
+  obj: any,
+  args: any,
+  context: any,
+  info: any
+) => {
+  try {
+    const { id, subject, body } = args.input;
+    const response = await getMessage(args.input.id);
+    return {
+      ...response,
+      id,
+      subject,
+      body,
+    };
   } catch (err) {
     return err;
   }
