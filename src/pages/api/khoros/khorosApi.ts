@@ -41,6 +41,7 @@ const getToken = async (
 export const modifyMessage = async (data: any) => {
   const { id, subject, body } = data;
   const token = await getToken(
+    //@ts-ignore
     community.address,
     community.username,
     community.password
