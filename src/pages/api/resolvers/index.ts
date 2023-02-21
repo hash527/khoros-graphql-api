@@ -33,7 +33,8 @@ export const updateMessage = async (
 ) => {
   try {
     const response = await modifyMessage(args.input);
-    // cache.invalidateAll('')
+    await cache.clear("fetchMessage", "");
+    await cache.clear("fetchMessages", "");
     return response;
   } catch (err) {
     return err;

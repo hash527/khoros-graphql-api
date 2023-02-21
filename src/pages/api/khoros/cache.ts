@@ -4,8 +4,8 @@ import { fields } from "./fields";
 import { subQueries } from "./subQueries";
 import khorosApi from "./khorosApi";
 
-//@ts-ignore
-let client = new Redis(process.env.REDIS_CLIENT_URL);
+//@ts-ignoree
+export const client = new Redis(process.env.REDIS_CLIENT_URL);
 
 const cache = createCache({
   ttl: 600, // seconds
@@ -15,39 +15,50 @@ const cache = createCache({
   },
 });
 
-cache.define("fetchMessages", async (limit) => {
-  // console.log("hit cache");
-  const response = await khorosApi
-    .post("search", {
-      json: [
-        {
-          messages: {
-            fields,
-            limit: limit,
-            subQueries,
+cache.define(
+  "fetchMessages",
+  {
+    references: () => ["messages"],
+  },
+  async (limit) => {
+    const response = await khorosApi
+      .post("search", {
+        json: [
+          {
+            messages: {
+              fields,
+              limit: limit,
+              subQueries,
+            },
           },
-        },
-      ],
-    })
-    .json();
-  return response;
-});
+        ],
+      })
+      .json();
+    return response;
+  }
+);
 
-cache.define("fetchMessage", async (id) => {
-  const response = await khorosApi
-    .post("search", {
-      json: [
-        {
-          messages: {
-            fields,
-            constraints: [{ id: id }],
-            subQueries,
+cache.define(
+  "fetchMessage",
+  {
+    references: () => ["message"],
+  },
+  async (id) => {
+    const response = await khorosApi
+      .post("search", {
+        json: [
+          {
+            messages: {
+              fields,
+              constraints: [{ id: id }],
+              subQueries,
+            },
           },
-        },
-      ],
-    })
-    .json();
-  return response;
-});
+        ],
+      })
+      .json();
+    return response;
+  }
+);
 
 export default cache;
