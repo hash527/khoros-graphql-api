@@ -1,5 +1,5 @@
 import { createSchema } from "graphql-yoga";
-import { messages, message, modifyMessage } from "../resolvers";
+import { messages, message, updateMessage } from "../resolvers";
 
 export const schema = createSchema({
   typeDefs: /* GraphQL */ `
@@ -400,7 +400,7 @@ export const schema = createSchema({
       message: message,
     },
     Mutation: {
-      updateMessage: modifyMessage,
+      updateMessage: updateMessage,
     },
   },
 });

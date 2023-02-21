@@ -13,7 +13,7 @@ export const getMessages = async (limit: any) => {
   }
 };
 
-// export const modifyMessage = async (id: string, data: any) => {
+// export const modifyMessage = async (id: string) => {
 //   const response = await khorosApi
 //     .put(`messages/${id}`, {
 //       json: [
@@ -37,6 +37,7 @@ export const getMessage = async (id: any) => {
     const response = await Promise.all([p1]);
     return response[0]?.data?.items[0];
   } catch (error) {
+    console.log(error);
     throw new GraphQLError("Unable to retrieve messages");
   }
 };

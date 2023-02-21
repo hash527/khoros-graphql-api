@@ -1,4 +1,6 @@
+import cache from "../khoros/cache";
 import { getMessage, getMessages } from "../khoros";
+import { modifyMessage } from "../khoros/khorosApi";
 export const messages = async (
   obj: any,
   args: any,
@@ -23,21 +25,16 @@ export const message = async (obj: any, args: any, context: any, info: any) => {
   }
 };
 
-export const modifyMessage = async (
+export const updateMessage = async (
   obj: any,
   args: any,
   context: any,
   info: any
 ) => {
   try {
-    const { id, subject, body } = args.input;
-    const response = await getMessage(args.input.id);
-    return {
-      ...response,
-      id,
-      subject,
-      body,
-    };
+    const response = await modifyMessage(args.input);
+    // cache.invalidateAll('')
+    return response;
   } catch (err) {
     return err;
   }
